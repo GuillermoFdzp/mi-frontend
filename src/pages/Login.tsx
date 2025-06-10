@@ -6,27 +6,43 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // <-- Añade esto
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
+
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
+
+    console.log("Login body:", { email: cleanEmail, password: cleanPassword });
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ email: cleanEmail, password: cleanPassword }),
       });
 
-      if (!response.ok) {
-        throw new Error("Credenciales incorrectas");
-      }
+      const data = await response.json();
+      console.log("Respuesta del backend:", data);
 
-      // Redirige a la página principal de la tienda
-      navigate("/home"); // Cambia "/home" por la ruta de tu página principal
-    } catch (err: any) {
-      setError(err.message);
+      // CAMBIA ESTA LÍNEA: Ahora comprueba data.access_token en lugar de data.token
+      if (data.access_token) {
+        localStorage.setItem("token", data.access_token); // Guarda el access_token
+        navigate("/home");
+      } else {
+        setError(data.message || "Credenciales incorrectas");
+      }
+    } catch (err) {
+      setError("Error de conexión");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,8 +83,12 @@ function Login() {
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
-            Entrar
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={loading}
+          >
+            {loading ? "Cargando..." : "Entrar"}
           </button>
           {error && <p className="text-danger mt-3">{error}</p>}
           <div className="register-link mt-3 text-center">

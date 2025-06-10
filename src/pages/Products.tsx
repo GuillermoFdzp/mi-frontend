@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  addToCartAPI,
-  getCart,
-  getProducts,
-  removeFromCartAPI,
-} from "../services/api";
+import { getProducts, getCart, addToCartAPI, removeFromCartAPI } from "../services/api";
 
 type Product = {
   id: number;
@@ -14,15 +8,10 @@ type Product = {
   imagen_url?: string | null;
 };
 
-function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
 
@@ -76,73 +65,9 @@ function Register() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      return;
-    }
-
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("No se pudo registrar el usuario");
-      }
-
-      setSuccess("¡Registro exitoso! Ahora puedes iniciar sesión.");
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
-
   return (
-    <div className="login-container">
-      <h2>Registro</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Repite la contraseña"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Registrarse</button>
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
-      </form>
-      <div className="register-link">
-        <Link to="/">¿Ya tienes cuenta? Inicia sesión</Link>
-      </div>
-
+    <div className="container my-5">
+      <h1 className="mb-4 text-center">Productos</h1>
       <div className="mb-4 text-end">
         <button
           className="btn btn-outline-primary"
@@ -241,4 +166,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default Products;

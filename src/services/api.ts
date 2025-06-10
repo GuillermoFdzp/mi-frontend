@@ -1,33 +1,44 @@
-import axios from 'axios'
+import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api' // Cambia esta URL por la de tu backend
+const API_URL = 'http://127.0.0.1:8000/api';
 
-// Obtener todos los productos
-export const getProducts = async () => {
-  const response = await axios.get(`${API_URL}/products`)
-  return response.data
+export const getCart = async (token: string) => {
+  const response = await axios.get(`${API_URL}/carrito`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const addToCartAPI = async (producto_id: number, cantidad: number, token: string) => {
+  const response = await axios.post(
+    `${API_URL}/carrito/agregar`,
+    { producto_id, cantidad },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+export const removeFromCartAPI = async (producto_id: number, token: string) => {
+  const response = await axios.post(
+    `${API_URL}/carrito/quitar`,
+    { producto_id },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+// Si usas fetch:
+export async function getProducts() {
+  const response = await fetch("http://127.0.0.1:8000/api/productos");
+  if (!response.ok) {
+    throw new Error("Error al cargar los productos");
+  }
+  return response.json();
 }
 
-// Obtener un producto por ID
-export const getProductById = async (id: string) => {
-  const response = await axios.get(`${API_URL}/products/${id}`)
-  return response.data
-}
-
-// Crear un producto
-export const createProduct = async (product: any) => {
-  const response = await axios.post(`${API_URL}/products`, product)
-  return response.data
-}
-
-// Actualizar un producto
-export const updateProduct = async (id: string, product: any) => {
-  const response = await axios.put(`${API_URL}/products/${id}`, product)
-  return response.data
-}
-
-// Eliminar un producto
-export const deleteProduct = async (id: string) => {
-  const response = await axios.delete(`${API_URL}/products/${id}`)
-  return response.data
-}
+// Si usas axios:
+// import axios from "axios";
+// export const getProducts = async () => {
+//   const response = await axios.get("http://127.0.0.1:8000/api/productos");
+//   return response.data;
+// };
