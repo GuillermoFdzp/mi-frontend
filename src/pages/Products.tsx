@@ -1,5 +1,22 @@
 import { useEffect, useState } from "react";
-import { getProducts, getCart, addToCartAPI, removeFromCartAPI } from "../services/api";
+import {
+  getProducts,
+  getCart,
+  addToCartAPI,
+  removeFromCartAPI,
+} from "../services/api";
+
+// Import all your images
+import archivadoImage from "../assets/archivador.png"; // Assuming archivado.png or archivado_ (with underscore)
+import impresoraImage from "../assets/impresora.png"; // Assuming impresora.png or impresora_ (with underscore)
+import lamparaImage from "../assets/lampara.png"; // Assuming lampara.png or lampara_ (with underscore)
+import logoImage from "../assets/logo.png";
+import mesaImage from "../assets/mesa.png";
+import monitorImage from "../assets/monitor.png"; // Changed from monito to monitor
+import pizarraImage from "../assets/pizarra.png";
+import ratonImage from "../assets/raton.png";
+import sillaImage from "../assets/silla.png";
+import tecladoImage from "../assets/teclado.png";
 
 type Product = {
   id: number;
@@ -65,6 +82,41 @@ function Products() {
     }
   };
 
+  // Helper function to get the correct image based on product name
+  const getProductImage = (productName: string) => {
+    const normalizedName = productName
+      .toLowerCase()
+      .split(" ")[0] // Take the first word
+      .normalize("NFD") // Normalize to decompose characters (e.g., é to e)
+      .replace(/[\u0300-\u036f]/g, ""); // Remove diacritics (accents)
+
+    switch (normalizedName) {
+      case "archivador":
+        return archivadoImage;
+      case "impresora":
+        return impresoraImage;
+      case "lampara":
+        return lamparaImage;
+      case "logo":
+        return logoImage;
+      case "mesa":
+        return mesaImage;
+      case "monitor": // Corrected from 'monito' to 'monitor' based on your new image list
+        return monitorImage;
+      case "pizarra":
+        return pizarraImage;
+      case "raton":
+        return ratonImage;
+      case "silla":
+        return sillaImage;
+      case "teclado":
+        return tecladoImage;
+      default:
+        // Fallback or a default image if no match is found
+        return logoImage; // You might want a generic placeholder image here
+    }
+  };
+
   return (
     <div className="container my-5">
       <h1 className="mb-4 text-center">Productos</h1>
@@ -83,13 +135,15 @@ function Products() {
           <div className="col-md-4 mb-4" key={product.id}>
             <div className="card h-100 shadow-sm">
               <img
-                src={
-                  product.imagen_url ||
-                  "https://via.placeholder.com/200x150?text=Producto"
-                }
+                src={product.imagen_url || getProductImage(product.nombre)} // Use the helper function
                 className="card-img-top"
                 alt={product.nombre}
-                style={{ objectFit: "cover", height: "180px" }}
+                style={{
+                  width: "100%",
+                  height: "180px",
+                  objectFit: "contain", // <-- clave para que no se salga
+                  background: "#fff", // opcional: fondo blanco si la imagen no ocupa todo
+                }}
               />
               <div className="card-body d-flex flex-column">
                 <h5 className="card-title">{product.nombre}</h5>

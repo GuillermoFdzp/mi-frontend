@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Contact from "./pages/Contact";
+import Promociones from "./pages/Promociones";
 import Layout from "./components/Layout";
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/promociones" element={<Promociones />} />
         </Route>
       </Routes>
     </BrowserRouter>
